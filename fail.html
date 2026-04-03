@@ -1,0 +1,86 @@
+<section class="animate-in fade-in duration-500">
+    <div id="file-system-content">
+        <div class="text-center py-20">
+            <i class="fas fa-circle-notch animate-spin text-4xl text-blue-600 mb-4"></i>
+            <p class="text-slate-400 font-bold">Memuatkan sistem fail...</p>
+        </div>
+    </div>
+</section>
+
+<script>
+    // 1. PENGURUSAN VIEW
+    async function loadView(fileName, callback) {
+        try {
+            const response = await fetch(fileName);
+            const html = await response.text();
+            const container = document.getElementById('file-system-content');
+            container.innerHTML = html;
+
+            const scripts = container.querySelectorAll("script");
+            scripts.forEach(oldScript => {
+                const newScript = document.createElement("script");
+                Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                oldScript.parentNode.replaceChild(newScript, oldScript);
+            });
+
+            if (callback) callback();
+        } catch (error) {
+            console.error("Ralat memuatkan pandangan:", error);
+        }
+    }
+
+    // 2. LOGIK AUTO-SYNC BACKGROUND (PEMBETULAN DI SINI)
+    async function backgroundSync() {
+        const accessToken = localStorage.getItem('siswaklik_access_token');
+        if (!accessToken) return;
+
+        let localFiles = JSON.parse(localStorage.getItem('siswa_local_files')) || [];
+        const pendingFiles = localFiles.filter(f => f.status === 'pending_sync');
+
+        for (const file of pendingFiles) {
+            try {
+                // GUNAKAN file.parentId supaya fail masuk ke folder yang betul
+                const targetFolderId = file.parentId || localStorage.getItem('siswaklik_drive_folder_id') || 'root';
+
+                const metadata = {
+                    name: file.name,
+                    mimeType: 'application/pdf',
+                    parents: [targetFolderId]
+                };
+
+                const formData = new FormData();
+                formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+                formData.append('file', dataURLtoBlob(file.content));
+
+                const response = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${accessToken}` },
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const driveFile = await response.json();
+                    file.status = 'synced';
+                    file.driveId = driveFile.id;
+                    localStorage.setItem('siswa_local_files', JSON.stringify(localFiles));
+                    
+                    // Trigger refresh jika sedang berada dalam folder tersebut
+                    if (typeof renderFiles === 'function') renderFiles();
+                }
+            } catch (err) {
+                console.error("Sync gagal untuk:", file.name, err);
+            }
+        }
+    }
+
+    function dataURLtoBlob(dataurl) {
+        var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+            bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+        while(n--) u8arr[n] = bstr.charCodeAt(n);
+        return new Blob([u8arr], {type:mime});
+    }
+
+    setInterval(backgroundSync, 15000); // Sync lebih kerap (15 saat)
+    loadView('folder.html');
+</script>

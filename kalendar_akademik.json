@@ -1,0 +1,147 @@
+{
+  "institusi": "Universiti Kebangsaan Malaysia",
+  "sesi": "2025/2026",
+  "kategori_pelajar": [
+    "Prasiswazah (Kampus Induk Bangi, FFAR, FSK)",
+    "Siswazah (Kampus Induk Bangi, FFAR, FSK & FPER-kecuali Program Doktor Pakar)"
+  ],
+  "kemaskini": "26 Feb. 2025",
+  "aktiviti_akademik": {
+    "semester_1": [
+      {
+        "perkara": "Pendaftaran Diri Pelajar Baharu (Pascasiswazah)",
+        "tarikh": "19 Sept - 5 Okt. 2025",
+        "tempoh": "2 minggu"
+      },
+      {
+        "perkara": "Lapor Diri Pelajar Baharu dan MAW (Prasiswazah)",
+        "tarikh": "27 Sept - 5 Okt. 2025",
+        "tempoh": "1 minggu"
+      },
+      {
+        "perkara": "Sesi Pembelajaran (Minggu 1-6)",
+        "tarikh": "6 Okt - 16 Nov. 2025",
+        "tempoh": "6 minggu"
+      },
+      {
+        "perkara": "Cuti Pertengahan Semester",
+        "tarikh": "17 - 23 Nov. 2025",
+        "tempoh": "1 minggu"
+      },
+      {
+        "perkara": "Majlis Konvokesyen UKM ke-53",
+        "tarikh": "22 - 28 Nov. 2025",
+        "tempoh": "7 hari"
+      },
+      {
+        "perkara": "Sesi Pembelajaran (Minggu 7-14)",
+        "tarikh": "24 Nov. 2025 - 18 Jan. 2026",
+        "tempoh": "8 minggu"
+      },
+      {
+        "perkara": "Minggu Ulangkaji",
+        "tarikh": "19 - 25 Jan. 2026",
+        "tempoh": "1 minggu"
+      },
+      {
+        "perkara": "Peperiksaan Akhir",
+        "tarikh": "26 Jan - 15 Feb. 2026",
+        "tempoh": "3 minggu"
+      },
+      {
+        "perkara": "Cuti Semester",
+        "tarikh": "16 Feb - 8 Mac 2026",
+        "tempoh": "3 minggu"
+      }
+    ],
+    "semester_2": [
+      {
+        "perkara": "Pendaftaran Diri Pelajar Baharu (Pascasiswazah)",
+        "tarikh": "23 Feb - 8 Mac 2026",
+        "tempoh": "2 minggu"
+      },
+      {
+        "perkara": "Sesi Pembelajaran (Minggu 1-2)",
+        "tarikh": "9 - 22 Mac 2026",
+        "tempoh": "2 minggu"
+      },
+      {
+        "perkara": "Cuti Perayaan (Aidilfitri)",
+        "tarikh": "23 - 29 Mac 2026",
+        "tempoh": "1 minggu"
+      },
+      {
+        "perkara": "Sesi Pembelajaran (Minggu 3-7)",
+        "tarikh": "30 Mac - 3 Mei 2026",
+        "tempoh": "5 minggu"
+      },
+      {
+        "perkara": "Cuti Pertengahan Semester",
+        "tarikh": "4 - 10 Mei 2026",
+        "tempoh": "1 minggu"
+      },
+      {
+        "perkara": "Sesi Pembelajaran (Minggu 8-14)",
+        "tarikh": "11 Mei - 28 Jun 2026",
+        "tempoh": "7 minggu"
+      },
+      {
+        "perkara": "Minggu Ulangkaji",
+        "tarikh": "29 Jun - 5 Julai 2026",
+        "tempoh": "1 minggu"
+      },
+      {
+        "perkara": "Peperiksaan Akhir",
+        "tarikh": "6 - 26 Julai 2026",
+        "tempoh": "3 minggu"
+      },
+      {
+        "perkara": "Cuti Semester",
+        "tarikh": "27 Julai - 27 Sept. 2026",
+        "tempoh": "9 minggu"
+      }
+    ],
+    "semester_3": [
+      {
+        "perkara": "Sesi Pembelajaran",
+        "tarikh": "27 Julai - 13 Sept. 2026",
+        "tempoh": "7 minggu"
+      },
+      {
+        "perkara": "Peperiksaan Akhir",
+        "tarikh": "14 - 20 Sept. 2026",
+        "tempoh": "1 minggu"
+      }
+    ]
+  },
+  "cuti_umum": {
+    "semester_1": [
+      { "hari": "Hari Deepavali", "tarikh": "20 Oktober 2025" },
+      { "hari": "Hari Keputeraan Sultan Selangor", "tarikh": "11 Disember 2025" },
+      { "hari": "Hari Krismas", "tarikh": "25 Disember 2025" },
+      { "hari": "Tahun Baharu", "tarikh": "1 Januari 2026" },
+      { "hari": "Hari Wilayah Persekutuan", "tarikh": "1 Februari 2026" },
+      { "hari": "Hari Thaipusam", "tarikh": "1-2 Februari 2026" },
+      { "hari": "Hari Tahun Baru Cina", "tarikh": "17-18 Februari 2026" },
+      { "hari": "Nuzul Quran", "tarikh": "7 Mac 2026" }
+    ],
+    "semester_2_dan_3": [
+      { "hari": "Hari Raya Aidilfitri", "tarikh": "21-23 Mac 2026" },
+      { "hari": "Hari Pekerja", "tarikh": "1 Mei 2026" },
+      { "hari": "Hari Raya Aidiladha", "tarikh": "27 Mei 2026" },
+      { "hari": "Pesta Kaamatan", "tarikh": "30-31 Mei 2026" },
+      { "hari": "Hari Wesak", "tarikh": "31 Mei 2026" },
+      { "hari": "Hari Gawai", "tarikh": "1-2 Jun 2026" },
+      { "hari": "Hari Keputeraan YDP Agong", "tarikh": "1 Jun 2026" },
+      { "hari": "Awal Muharam", "tarikh": "17 Jun 2026" },
+      { "hari": "Maulidur Rasul", "tarikh": "25 Ogos 2026" },
+      { "hari": "Hari Kebangsaan", "tarikh": "31 Ogos 2026" },
+      { "hari": "Hari Malaysia", "tarikh": "16 September 2026" }
+    ]
+  },
+  "nota_khas": [
+    "Sesi kuliah minggu ke-3 Semester 1 (Deepavali) dijalankan secara hibrid bagi pelajar Hindu.",
+    "Sesi kuliah minggu 1 & 2 Semester 2 dijalankan secara hibrid/atas talian sempena Hari Raya Aidilfitri.",
+    "Sesi kuliah minggu ke-12 & 13 Semester 2 dijalankan secara hibrid/atas talian sempena cuti umum Aidiladha, Wesak, Kaamatan, Gawai, dan Keputeraan Agong."
+  ]
+}

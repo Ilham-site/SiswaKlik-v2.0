@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiswaKlik - KMJP Drive Storage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 p-6 lg:p-10">
+
+<div class="max-w-4xl mx-auto space-y-8 animate-in slide-in-from-bottom-4 duration-500">
+    <div class="flex items-center gap-4">
+        <a href="index.html" class="bg-white p-3 rounded-2xl shadow-sm border border-slate-200 hover:bg-slate-50">
+            <i class="fas fa-chevron-left text-slate-400"></i>
+        </a>
+        <h2 class="text-2xl font-black text-slate-800">Ekstrak Jadual KMJP</h2>
+    </div>
+
+    <div class="bg-gradient-to-br from-blue-700 to-indigo-800 rounded-[2.5rem] p-8 text-white shadow-xl">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="text-center md:text-left">
+                <h3 class="text-xl font-bold">Simpan KMJP ke Cloud</h3>
+                <p class="text-blue-100 text-sm mt-2">Fail akan disimpan dalam folder SiswaKlik/KMJP di Google Drive anda.</p>
+            </div>
+            <input type="file" id="pdfInput" class="hidden" accept=".pdf" onchange="handleKMJPUpload(this)">
+            <button onclick="document.getElementById('pdfInput').click()" class="bg-white text-blue-700 px-8 py-4 rounded-2xl font-bold hover:scale-105 transition-all shadow-lg shrink-0">
+                <i class="fas fa-cloud-upload-alt mr-2"></i> Muat Naik KMJP
+            </button>
+        </div>
+    </div>
+
+    <section>
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="font-bold text-slate-800">Senarai Peperiksaan Aktif</h3>
+            <span id="exam-count" class="text-xs font-bold bg-blue-100 text-blue-600 px-3 py-1 rounded-full">0 Subjek</span>
+        </div>
+        <div id="exam-list" class="space-y-4"></div>
+    </section>
+</div>
+
+<script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+    // Konfigurasi Drive API
+    async function getKMJPFolderId() {
+        const accessToken = JSON.parse(localStorage.getItem('siswaklik_user'))?.access_token;
+        const parentId = localStorage.getItem('siswaklik_drive_folder_id');
+        
+        // Cari folder KMJP dalam SiswaKlik
+        const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='KMJP' and '${parentId}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`, {
+            headers: { 'Authorization': `Bearer ${accessToken}` }
+        });
+        const data = await res.json();
+        
+        if (data.files && data.files.length > 0) return data.files[0].id;
+
+        // Cipta jika tiada
+        const createRes = await fetch('https://www.googleapis.com/drive/v3/files', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: 'KMJP', mimeType: 'application/vnd.google-apps.folder', parents: [parentId] })
+        });
+        const newFolder = await createRes.json();
+        return newFolder.id;
+    }
+
+    async function handleKMJPUpload(input) {
+        const file = input.files[0];
+        if(!file) return;
+        Swal.fire({ title: 'Menyimpan ke Drive...', didOpen: () => Swal.showLoading() });
+
+        try {
+            const accessToken = JSON.parse(localStorage.getItem('siswaklik_user'))?.access_token;
+            const folderId = await getKMJPFolderId();
+
+            // 1. Upload ke Drive
+            const metadata = { name: `KMJP_${Date.now()}.pdf`, parents: [folderId] };
+            const formData = new FormData();
+            formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+            formData.append('file', file);
+
+            const uploadRes = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${accessToken}` },
+                body: formData
+            });
+            const driveFile = await uploadRes.json();
+            localStorage.setItem('current_kmjp_id', driveFile.id);
+
+            // 2. Ekstrak Teks (Logik sedia ada)
+            const reader = new FileReader();
+            reader.onload = async function() {
+                const typedarray = new Uint8Array(this.result);
+                const pdf = await pdfjsLib.getDocument(typedarray).promise;
+                let text = "";
+                for(let i=1; i<=pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const content = await page.getTextContent();
+                    text += content.items.map(item => item.str).join(" ") + "\n";
+                }
+                
+                processKMJPText(text);
+            };
+            reader.readAsArrayBuffer(file);
+
+        } catch(e) { Swal.fire('Ralat', 'Gagal menyimpan fail ke Drive', 'error'); }
+    }
+
+    function processKMJPText(text) {
+        const cleanText = text.replace(/\s+/g, ' ');
+        const pattern = /([A-Z]{4}\d{4})\s+(.*?)\s+(\d{2}\/\d{2}\/\d{4})\s+(\d{2}:\d{2})\s+.*?(DEWAN\s\(.*?\)|DGEMILANG|DT\s[A-Z\s]+|DEWAN\s[A-Z]+|DEWAN\sPEP[A-Z0-9\s]+)/gi;
+        
+        const found = [];
+        let m;
+        while ((m = pattern.exec(cleanText)) !== null) {
+            if (m[2].includes("Penilaian Berterusan")) continue;
+            found.push({
+                id: 'ex-'+Math.random().toString(36).substr(2,7),
+                code: m[1], title: m[2].trim(),
+                date: m[3].split('/').reverse().join('-'),
+                time: m[4], location: m[5].trim()
+            });
+        }
+        localStorage.setItem('siswa_exams', JSON.stringify(found));
+        renderExams();
+        Swal.fire('Berjaya!', 'Jadual dikemaskini dan disimpan secara kekal.', 'success');
+    }
+
+    function renderExams() {
+        const exams = JSON.parse(localStorage.getItem('siswa_exams')) || [];
+        const container = document.getElementById('exam-list');
+        document.getElementById('exam-count').innerText = `${exams.length} Subjek`;
+
+        if(exams.length === 0) {
+            container.innerHTML = `<div class="text-center py-20 bg-white rounded-[2.5rem] border border-dashed border-slate-200 text-slate-400 font-medium">Tiada data peperiksaan dikesan.</div>`;
+            return;
+        }
+
+        container.innerHTML = exams.map(ex => `
+            <div class="bg-white p-6 rounded-[2rem] border border-slate-100 flex items-center justify-between group">
+                <div class="flex items-center gap-5">
+                    <div class="h-14 w-14 bg-blue-50 text-blue-600 rounded-2xl flex flex-col items-center justify-center border border-blue-100 font-black">
+                        <span class="text-[9px] uppercase">${new Date(ex.date).toLocaleString('ms-MY', {month: 'short'})}</span>
+                        <span class="text-xl">${new Date(ex.date).getDate()}</span>
+                    </div>
+                    <div>
+                        <h4 class="font-black text-slate-800 uppercase">${ex.code}</h4>
+                        <p class="text-xs text-slate-400 font-bold mb-1">${ex.title}</p>
+                        <div class="flex gap-4 text-[10px] font-bold text-slate-500 uppercase">
+                            <span><i class="fas fa-clock text-blue-400 mr-1"></i> ${ex.time}</span>
+                            <span><i class="fas fa-map-marker-alt text-rose-400 mr-1"></i> ${ex.location}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    window.onload = renderExams;
+</script>
+</body>
+</html>
