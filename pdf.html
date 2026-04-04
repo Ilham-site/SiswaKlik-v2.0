@@ -1,51 +1,52 @@
-<div class="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col h-[90vh] animate-in slide-in-from-bottom-6 border border-slate-100">
-    <div class="p-6 border-b border-slate-100 flex flex-wrap gap-4 items-center justify-between bg-white/80 backdrop-blur-md sticky top-0 z-10">
+<div class="bg-white dark:bg-darkCard rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col h-[90vh] animate-in slide-in-from-bottom-6 border border-slate-100 dark:border-slate-700 transition-colors">
+    
+    <div class="p-6 border-b border-slate-100 dark:border-slate-700 flex flex-wrap gap-4 items-center justify-between bg-white/80 dark:bg-darkCard/80 backdrop-blur-md sticky top-0 z-10">
         <div class="flex items-center gap-4">
-            <button onclick="goBack()" class="p-3 hover:bg-blue-50 rounded-full transition-all group border border-transparent hover:border-blue-100">
-                <i class="fas fa-arrow-left text-slate-400 group-hover:text-blue-600"></i>
+            <button onclick="goBack()" class="p-3 hover:bg-blue-50 dark:hover:bg-slate-800 rounded-full transition-all group border border-transparent hover:border-blue-100 dark:hover:border-slate-600">
+                <i class="fas fa-arrow-left text-slate-400 group-hover:text-brandBlue dark:group-hover:text-brandYellow"></i>
             </button>
             <div>
-                <h3 class="font-black text-slate-800 text-lg md:text-xl truncate max-w-[200px]" id="display-filename">Memuatkan...</h3>
+                <h3 class="font-black text-slate-800 dark:text-white text-lg md:text-xl truncate max-w-[200px]" id="display-filename">Memuatkan...</h3>
                 <div class="flex items-center gap-2">
                     <span id="sync-dot" class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                    <p id="sync-status" class="text-[10px] text-blue-600 font-black uppercase tracking-widest">Universal Viewer</p>
+                    <p id="sync-status" class="text-[10px] text-brandBlue dark:text-brandYellow font-black uppercase tracking-widest">Universal Viewer</p>
                 </div>
             </div>
         </div>
         
         <div class="flex items-center gap-3">
-            <button id="upload-drive-btn" class="hidden bg-blue-600 text-white px-5 py-2.5 rounded-2xl font-bold shadow-lg hover:bg-blue-700 transition-all active:scale-95 flex items-center gap-2 text-sm" onclick="uploadToDrive()">
+            <button id="upload-drive-btn" class="hidden bg-brandBlue text-brandYellow px-5 py-2.5 rounded-2xl font-bold shadow-lg hover:bg-blue-700 dark:hover:bg-blue-600 transition-all active:scale-95 flex items-center gap-2 text-sm border-2 border-brandBlue dark:border-brandYellow" onclick="uploadToDrive()">
                 <i class="fas fa-cloud-upload-alt"></i> <span>SIMPAN KE DRIVE</span>
             </button>
 
-            <button onclick="confirmDelete()" class="p-3 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white rounded-2xl transition-all flex items-center gap-2 font-bold px-5 text-sm border border-red-100">
+            <button onclick="confirmDelete()" class="p-3 bg-red-50 dark:bg-red-900/20 text-red-500 hover:bg-red-500 hover:text-white rounded-2xl transition-all flex items-center gap-2 font-bold px-5 text-sm border border-red-100 dark:border-red-900/30">
                 <i class="fas fa-trash-alt"></i>
             </button>
         </div>
     </div>
 
-    <div class="flex-1 bg-slate-200 overflow-auto relative p-2 md:p-6" id="pdf-scroll-container">
-        <div id="loading-overlay" class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm">
+    <div class="flex-1 bg-slate-100 dark:bg-darkBg overflow-auto relative p-2 md:p-6" id="pdf-scroll-container">
+        
+        <div id="loading-overlay" class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/90 dark:bg-darkBg/90 backdrop-blur-sm">
             <div class="relative">
-                <div class="w-16 h-16 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin"></div>
+                <div class="w-16 h-16 border-4 border-blue-100 dark:border-slate-800 border-t-brandBlue dark:border-t-brandYellow rounded-full animate-spin"></div>
                 <i class="fas fa-file-pdf absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-red-500 text-xl"></i>
             </div>
-            <p id="loading-text" class="text-slate-500 font-bold mt-4 tracking-tight">Menyediakan paparan dokumen...</p>
-            <p id="page-progress" class="text-blue-600 text-xs font-bold mt-2"></p>
+            <p id="loading-text" class="text-slate-500 dark:text-slate-400 font-bold mt-4 tracking-tight">Menyediakan paparan dokumen...</p>
+            <p id="page-progress" class="text-brandBlue dark:text-brandYellow text-xs font-bold mt-2"></p>
         </div>
         
         <div id="pdf-render-wrapper" class="flex flex-col items-center gap-6"></div>
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     (function() {
         const pdfjsLib = window['pdfjs-dist/build/pdf'];
-        // Gunakan worker CDN yang stabil
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
         const editingId = localStorage.getItem('editing_file_id');
         const editingName = localStorage.getItem('editing_file_name');
@@ -55,7 +56,6 @@
         document.getElementById('display-filename').innerText = editingName || "Fail PDF";
 
         window.goBack = function() {
-            // Bersihkan memori sebelum keluar
             document.getElementById('pdf-render-wrapper').innerHTML = '';
             if (typeof loadView === 'function') loadView('folder.html');
         };
@@ -76,7 +76,6 @@
                         statusLabel.innerText = "Mod Luar Talian (Offline)";
                         dot.className = "w-2 h-2 rounded-full bg-amber-500 animate-pulse";
                     }
-                    // Tukar Base64 ke Uint8Array dengan cara yang lebih selamat untuk fail besar
                     pdfData = dataURLtoUint8Array(localData.content);
                 } 
                 else if (accessToken && editingId && !editingId.startsWith('local-')) {
@@ -92,7 +91,7 @@
                     pdfData = new Uint8Array(arrayBuffer);
                     
                     statusLabel.innerText = "Paparan Cloud Google Drive";
-                    dot.className = "w-2 h-2 rounded-full bg-blue-500";
+                    dot.className = "w-2 h-2 rounded-full bg-brandBlue dark:bg-brandYellow";
                 } else {
                     throw new Error("Data fail tidak ditemui.");
                 }
@@ -106,9 +105,9 @@
                 loader.innerHTML = `
                     <div class="text-center p-6">
                         <i class="fas fa-exclamation-circle text-red-500 text-4xl mb-4"></i>
-                        <p class="font-bold text-slate-800">${err.message}</p>
+                        <p class="font-bold text-slate-800 dark:text-white">${err.message}</p>
                         <p class="text-sm text-slate-500 mt-2">Mungkin fail terlalu besar atau masalah sesi log masuk.</p>
-                        <button onclick="goBack()" class="mt-6 bg-slate-100 px-6 py-2 rounded-xl font-bold">Kembali</button>
+                        <button onclick="goBack()" class="mt-6 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-white px-6 py-2 rounded-xl font-bold">Kembali</button>
                     </div>`;
             }
         }
@@ -119,7 +118,6 @@
             const progText = document.getElementById('page-progress');
             
             try {
-                // Gunakan disableAutoFetch dan disableStream untuk kestabilan fail besar
                 const loadingTask = pdfjsLib.getDocument({
                     data: data,
                     disableAutoFetch: true,
@@ -129,20 +127,17 @@
                 const pdf = await loadingTask.promise;
                 wrapper.innerHTML = ''; 
 
-                // Render secara berperingkat (sequential) untuk jimat RAM
                 for (let i = 1; i <= pdf.numPages; i++) {
                     progText.innerText = `Menjana helaian ${i} daripada ${pdf.numPages}...`;
                     
                     const page = await pdf.getPage(i);
-                    // Gunakan scale 1.2 untuk mobile, 1.5 untuk desktop
                     const scale = window.innerWidth < 768 ? 1.0 : 1.5;
                     const viewport = page.getViewport({ scale: scale });
                     
                     const canvas = document.createElement('canvas');
-                    const context = canvas.getContext('2d', { alpha: false }); // Optimasi: Matikan alpha
-                    canvas.className = "shadow-2xl mb-4 max-w-full h-auto rounded-lg border border-slate-300";
+                    const context = canvas.getContext('2d', { alpha: false });
+                    canvas.className = "shadow-2xl mb-4 max-w-full h-auto rounded-lg border border-slate-300 dark:border-slate-600";
                     
-                    // Set output size
                     canvas.height = viewport.height;
                     canvas.width = viewport.width;
 
@@ -154,7 +149,6 @@
                         intent: 'display'
                     }).promise;
 
-                    // Bebaskan memori page selepas render
                     page.cleanup();
                 }
                 
@@ -168,7 +162,6 @@
             }
         }
 
-        // Fungsi penukaran yang lebih efisien untuk fail besar
         function dataURLtoUint8Array(dataurl) {
             const parts = dataurl.split(',');
             const bstr = atob(parts[1]);
@@ -181,12 +174,16 @@
         }
 
         window.confirmDelete = async function() {
+            const isDark = document.documentElement.classList.contains('dark');
             const result = await Swal.fire({
                 title: 'Padam Fail?',
                 text: "Tindakan ini akan membuang fail dari simpanan peranti dan Drive.",
                 icon: 'warning',
+                background: isDark ? '#1E293B' : '#ffffff',
+                color: isDark ? '#ffffff' : '#0F172A',
                 showCancelButton: true,
                 confirmButtonColor: '#ef4444',
+                cancelButtonColor: isDark ? '#334155' : '#cbd5e1',
                 confirmButtonText: 'Ya, Padam'
             });
 
@@ -208,6 +205,7 @@
 
         window.uploadToDrive = async function() {
             const btn = document.getElementById('upload-drive-btn');
+            const isDark = document.documentElement.classList.contains('dark');
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner animate-spin"></i> Menghantar...';
 
@@ -226,7 +224,6 @@
                 const formData = new FormData();
                 formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
                 
-                // Gunakan Blob terus dari Uint8Array
                 const pdfBlob = new Blob([dataURLtoUint8Array(file.content)], { type: 'application/pdf' });
                 formData.append('file', pdfBlob);
 
@@ -242,14 +239,27 @@
                     file.status = 'synced';
                     localStorage.setItem('siswa_local_files', JSON.stringify(localFiles));
                     
-                    Swal.fire('Berjaya', 'Fail telah disimpan ke Google Drive', 'success');
+                    Swal.fire({
+                        title: 'Berjaya',
+                        text: 'Fail telah disimpan ke Google Drive',
+                        icon: 'success',
+                        background: isDark ? '#1E293B' : '#ffffff',
+                        color: isDark ? '#ffffff' : '#0F172A',
+                        confirmButtonColor: '#0057FF'
+                    });
                     btn.classList.add('hidden');
                     initViewer();
                 } else {
                     throw new Error("Gagal memuat naik ke Google Drive.");
                 }
             } catch (err) { 
-                Swal.fire('Ralat', err.message, 'error'); 
+                Swal.fire({
+                    title: 'Ralat',
+                    text: err.message,
+                    icon: 'error',
+                    background: isDark ? '#1E293B' : '#ffffff',
+                    color: isDark ? '#ffffff' : '#0F172A'
+                }); 
             } finally { 
                 btn.disabled = false; 
                 btn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> <span>SIMPAN KE DRIVE</span>';
@@ -264,17 +274,24 @@
     canvas {
         max-width: 100% !important;
         height: auto !important;
-        background: white;
+        background: white; /* Sentiasa putih supaya teks PDF hitam boleh dibaca */
     }
     #pdf-scroll-container {
         scroll-behavior: smooth;
     }
+    /* Scrollbar Styling selaras dengan index.html */
     #pdf-scroll-container::-webkit-scrollbar {
         width: 8px;
+    }
+    #pdf-scroll-container::-webkit-scrollbar-track {
+        background: transparent;
     }
     #pdf-scroll-container::-webkit-scrollbar-thumb {
         background: #cbd5e1;
         border-radius: 10px;
+    }
+    .dark #pdf-scroll-container::-webkit-scrollbar-thumb {
+        background: #334155;
     }
     .slide-in-from-bottom-6 {
         animation: slideIn 0.4s ease-out;
