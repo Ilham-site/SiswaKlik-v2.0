@@ -211,7 +211,7 @@
         async function initCloudStorage() {
             try {
                 if (!spreadsheetId) {
-                    let folderId = await getOrCreateFolder("SiswaKlik");
+                    let folderId = await getOrCreateFolder("SiswaKlik v2.0");
                     spreadsheetId = await getOrCreateSpreadsheet("SiswaKlik Time Management v2.0", folderId);
                     localStorage.setItem('siswaklik_spreadsheet_id', spreadsheetId);
                 }
