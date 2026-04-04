@@ -8,9 +8,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://apis.google.com/js/api.js"></script>
+
     <script>
+        // Tailwind Dark Mode Configuration
         tailwind.config = {
             darkMode: 'class',
             theme: {
@@ -28,15 +31,24 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
         body { font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.3s ease; }
+        
         .drawer-transition { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .glass-nav { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); }
         .dark .glass-nav { background: rgba(15, 23, 42, 0.9); border-color: #334155; }
+        
         .nav-active { background-color: #FFD700 !important; color: #0057FF !important; font-weight: 800; border-right: 4px solid #0057FF; }
         .dark .nav-active { border-right: 4px solid #FFD700; }
+        
         .user-profile-glow { box-shadow: 0 0 20px rgba(0, 87, 255, 0.3); }
         .blue-pop-shadow { box-shadow: 0 10px 25px -5px rgba(0, 87, 255, 0.4); }
+        
         .animate-fade { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Mobile Optimization */
+        @media (max-width: 640px) {
+            .mobile-bottom-nav { border-top: 1px solid rgba(0, 87, 255, 0.1); }
+        }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-darkBg text-slate-900 dark:text-slate-100 min-h-screen">
@@ -110,7 +122,7 @@
             <header class="flex flex-col md:flex-row justify-between items-start gap-4">
                 <div>
                     <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white">Selamat Kembali, <span id="userNameDisplay" class="text-brandBlue dark:text-brandYellow">Pelajar</span>!</h1>
-                    <p class="text-slate-500 dark:text-slate-400 font-medium mt-1">Sistem dihubungkan dengan Google Sheets.</p>
+                    <p class="text-slate-500 dark:text-slate-400 font-medium mt-1">Sistem dihubungkan dengan Google Sheets (KMJP Cloud).</p>
                 </div>
                 <div id="systemDate" class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-full"></div>
             </header>
@@ -140,12 +152,12 @@
                     <div class="bg-gradient-to-br from-brandBlue to-indigo-800 p-8 rounded-[2.5rem] text-white shadow-xl relative overflow-hidden blue-pop-shadow">
                         <i class="fas fa-university absolute -right-4 -bottom-4 text-brandYellow/10 text-9xl"></i>
                         <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
-                            <span class="w-2 h-2 bg-brandYellow rounded-full animate-pulse"></span> Status Akademik
+                            <span class="w-2 h-2 bg-brandYellow rounded-full animate-pulse"></span> Ringkasan Akademik
                         </h3>
                         <div class="space-y-4 relative z-10">
                             <div>
                                 <p class="text-[10px] text-brandYellow opacity-90 uppercase tracking-widest font-bold mb-1" id="weekStatus">Memproses...</p>
-                                <h2 id="semesterStatus" class="text-2xl font-black leading-tight mb-1">Memuatkan...</h2>
+                                <h2 id="semesterStatus" class="text-2xl font-black leading-tight mb-1">Memuatkan Data...</h2>
                                 <p id="dateRange" class="text-xs text-blue-100 font-medium">-</p>
                             </div>
                             <div class="pt-4 border-t border-white/10">
@@ -159,13 +171,35 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="bg-white dark:bg-darkCard p-6 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-slate-700">
+                        <h3 class="font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
+                            <i class="fas fa-calendar-check text-brandBlue dark:text-brandYellow"></i> Aktiviti Terdekat
+                        </h3>
+                        <div id="upcomingEvents" class="space-y-4">
+                            <div class="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-100 dark:border-slate-700">
+                                <p id="nextActivityTitle" class="font-bold text-slate-700 dark:text-slate-200 text-sm">Sila kemaskini kalendar</p>
+                                <p id="nextActivityDate" class="text-[10px] text-brandBlue dark:text-brandYellow mt-1 uppercase font-bold tracking-wider">Tiada Data</p>
+                            </div>
+                        </div>
+                        <button onclick="window.location.href='#'" class="mt-4 w-full text-center py-4 bg-brandBlue/5 dark:bg-brandYellow/10 text-brandBlue dark:text-brandYellow rounded-2xl text-xs font-black hover:bg-brandBlue hover:text-brandYellow transition-all border border-brandBlue/20 uppercase tracking-wide">
+                            Kalendar Akademik <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </main>
 
+    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white/80 dark:bg-darkCard/80 backdrop-blur-xl p-2 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 md:hidden z-50">
+        <button onclick="loadDashboard()" class="p-4 text-brandBlue dark:text-brandYellow"><i class="fas fa-home"></i></button>
+        <button onclick="loadPage('kalendar.html', null)" class="p-4 text-slate-400"><i class="fas fa-calendar-alt"></i></button>
+        <div class="w-[1px] h-6 bg-slate-200 dark:bg-slate-700 mx-1"></div>
+        <button onclick="document.getElementById('kmjpInput').click()" class="bg-brandBlue text-brandYellow w-10 h-10 rounded-xl shadow-lg"><i class="fas fa-plus"></i></button>
+    </div>
+
     <script>
-        // Configuration
+        // --- Google API Config ---
         const CLIENT_ID = '755048052549-8tpra9hbicin61psv2pb0tvvjk9q2thr.apps.googleusercontent.com';
         const SCOPES = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.file';
         let tokenClient;
@@ -174,7 +208,7 @@
 
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
-        // --- Google API Initialization ---
+        // --- Google SDK Initialization ---
         function gapiLoaded() { gapi.load('client', intializeGapiClient); }
         async function intializeGapiClient() {
             await gapi.client.init({
@@ -187,14 +221,13 @@
             tokenClient = google.accounts.oauth2.initTokenClient({
                 client_id: CLIENT_ID,
                 scope: SCOPES,
-                callback: '', // defined later
+                callback: '', // defined during token request
             });
             gisInited = true;
             checkBeforeStart();
         }
         function checkBeforeStart() { if (gapiInited && gisInited) initDashboard(); }
 
-        // --- Core Functions ---
         async function getAccessToken() {
             return new Promise((resolve, reject) => {
                 tokenClient.callback = (resp) => {
@@ -209,11 +242,11 @@
             });
         }
 
+        // --- Spreadsheet Management ---
         async function getOrCreateSpreadsheet() {
             const folderName = "SiswaKlik v2.0";
             const fileName = "KMJP v2.0";
             
-            // 1. Cari Folder
             let res = await gapi.client.drive.files.list({ q: `name='${folderName}' and mimeType='application/vnd.google-apps.folder' and trashed=false` });
             let folderId = res.result.files.length > 0 ? res.result.files[0].id : null;
             
@@ -223,7 +256,6 @@
                 folderId = folder.result.id;
             }
 
-            // 2. Cari Fail Spreadsheet
             res = await gapi.client.drive.files.list({ q: `name='${fileName}' and parents in '${folderId}' and trashed=false` });
             let fileId = res.result.files.length > 0 ? res.result.files[0].id : null;
 
@@ -231,11 +263,8 @@
                 const ssMetadata = { properties: { title: fileName } };
                 const spreadsheet = await gapi.client.sheets.spreadsheets.create({ resource: ssMetadata });
                 fileId = spreadsheet.result.spreadsheetId;
-                
-                // Pindahkan ke folder
                 await gapi.client.drive.files.update({ fileId: fileId, addParents: folderId, fields: 'id' });
                 
-                // Set Header
                 const headers = [['KOD KURSUS', 'SET KURSUS', 'TAJUK KURSUS', 'TARIKH', 'MASA', 'TEMPOH', 'TEMPAT', 'MEJA']];
                 await gapi.client.sheets.spreadsheets.values.update({
                     spreadsheetId: fileId,
@@ -247,15 +276,22 @@
             return fileId;
         }
 
+        // --- KMJP Logic (Cloud Integrated) ---
         async function processKMJP(input) {
             const file = input.files[0];
             if (!file) return;
             
             try {
-                Swal.fire({ title: 'Menyambung...', text: 'Sila sahkan akaun Google anda', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                Swal.fire({ 
+                    title: 'Menghubungkan...', 
+                    text: 'Sila sahkan akaun Google anda', 
+                    allowOutsideClick: false, 
+                    didOpen: () => Swal.showLoading() 
+                });
+                
                 await getAccessToken();
                 
-                Swal.update({ title: 'Mengekstrak PDF...', text: 'Menganalisa data jadual' });
+                Swal.update({ title: 'Mengekstrak PDF...', text: 'Menganalisa data jadual UKM' });
                 const reader = new FileReader();
                 reader.onload = async function() {
                     const typedarray = new Uint8Array(this.result);
@@ -268,7 +304,7 @@
                     }
                     
                     const cleanText = text.replace(/\s+/g, ' ');
-                    // Regex disesuaikan untuk format KMJP UKM
+                    // Regex KMJP UKM Format
                     const pattern = /([A-Z]{4}\d{4})\s+(\d+)\s+(.*?)\s+(\d{2}\/\d{2}\/\d{4})\s+(\d{2}:\d{2})\s+(\d+\.\d+)\s+(.*?)\s+(\d+)/gi;
                     const rows = [];
                     let m;
@@ -281,13 +317,9 @@
                         return;
                     }
 
-                    Swal.update({ title: 'Mengemaskini Cloud...', text: 'Menghantar data ke Spreadsheet' });
+                    Swal.update({ title: 'Mengemaskini Cloud...', text: 'Menghantar data ke Google Sheets' });
                     const spreadsheetId = await getOrCreateSpreadsheet();
-                    
-                    // Padam data lama (A2:H100)
                     await gapi.client.sheets.spreadsheets.values.clear({ spreadsheetId, range: 'Sheet1!A2:H100' });
-                    
-                    // Masukkan data baru
                     await gapi.client.sheets.spreadsheets.values.update({
                         spreadsheetId,
                         range: 'Sheet1!A2',
@@ -296,35 +328,43 @@
                     });
 
                     renderExamsFromCloud();
-                    Swal.fire('Berjaya!', `${rows.length} subjek telah dikemaskini ke cloud.`, 'success');
+                    Swal.fire('Berjaya!', `${rows.length} subjek telah disimpan ke Google Drive.`, 'success');
                 };
                 reader.readAsArrayBuffer(file);
             } catch (err) {
                 console.error(err);
-                Swal.fire('Ralat', 'Gagal memproses fail ke Google Sheets.', 'error');
+                Swal.fire('Ralat', 'Gagal memproses ke Google Sheets.', 'error');
             }
+            input.value = "";
         }
 
         async function renderExamsFromCloud() {
             const container = document.getElementById('examContainer');
+            if(!container) return;
+
             try {
                 const spreadsheetId = await getOrCreateSpreadsheet();
                 const response = await gapi.client.sheets.spreadsheets.values.get({ spreadsheetId, range: 'Sheet1!A2:H100' });
                 const rows = response.result.values;
 
                 if (!rows || rows.length === 0) {
-                    container.innerHTML = `<div class="text-center py-10 opacity-30"><i class="fas fa-cloud-upload-alt text-4xl mb-2"></i><p>Tiada data peperiksaan di cloud.</p></div>`;
+                    container.innerHTML = `
+                    <div class="text-center py-10 opacity-30">
+                        <i class="fas fa-cloud-upload-alt text-4xl mb-2"></i>
+                        <p>Tiada data di cloud. Sila muat naik KMJP.</p>
+                    </div>`;
                     return;
                 }
 
                 container.innerHTML = rows.map(row => {
                     const dateParts = row[3].split('/');
                     const isoDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+                    const d = new Date(isoDate);
                     return `
                     <div class="flex items-center gap-4 p-5 rounded-[2rem] border border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800/50 hover:border-brandBlue/30 transition group">
                         <div class="bg-brandBlue shadow-sm p-3 rounded-2xl text-center min-w-[70px]">
-                            <p class="text-[10px] font-bold text-white/70 uppercase">${new Date(isoDate).toLocaleString('ms-MY', {month: 'short'})}</p>
-                            <p class="text-xl font-black text-brandYellow">${new Date(isoDate).getDate()}</p>
+                            <p class="text-[10px] font-bold text-white/70 uppercase">${d.toLocaleString('ms-MY', {month: 'short'})}</p>
+                            <p class="text-xl font-black text-brandYellow">${d.getDate()}</p>
                         </div>
                         <div class="flex-1">
                             <h4 class="font-bold text-slate-800 dark:text-slate-100 leading-tight text-sm md:text-base">${row[2]} (${row[0]})</h4>
@@ -336,42 +376,23 @@
                     </div>`;
                 }).join('');
             } catch (err) {
-                container.innerHTML = `<button onclick="getAccessToken().then(renderExamsFromCloud)" class="w-full p-6 border-2 border-dashed rounded-3xl text-brandBlue font-bold">Tekan untuk Sambung ke Google Sheets</button>`;
+                container.innerHTML = `
+                <button onclick="getAccessToken().then(renderExamsFromCloud)" class="w-full p-6 border-2 border-dashed border-brandBlue/30 rounded-3xl text-brandBlue font-bold hover:bg-brandBlue/5 transition">
+                    <i class="fas fa-sync-alt mr-2"></i> Klik untuk Sambung Google Sheets
+                </button>`;
             }
         }
 
-        // --- Rest of Original UI Logic ---
+        // --- Core UI Logic ---
         function toggleDarkMode() {
             document.documentElement.classList.toggle('dark');
             localStorage.setItem('siswaklik_theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
         }
 
-        function initDashboard() {
-            const userData = JSON.parse(localStorage.getItem('siswaklik_user'));
-            if(userData) {
-                document.getElementById('welcomeText').innerText = `Hai, ${userData.given_name || userData.name.split(' ')[0]}!`;
-                document.getElementById('userSubtext').innerText = userData.email;
-                document.getElementById('userNameDisplay').innerText = userData.name.split(' ')[0];
-                if (userData.picture) {
-                    const avatar = document.getElementById('userAvatar');
-                    avatar.src = userData.picture;
-                    avatar.classList.remove('hidden');
-                    document.getElementById('defaultIcon').classList.add('hidden');
-                }
-            }
-            updateDate();
-            renderExamsFromCloud();
+        if (localStorage.getItem('siswaklik_theme') === 'dark' || (!localStorage.getItem('siswaklik_theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
         }
 
-        function updateDate() {
-            const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-            const el = document.getElementById('systemDate');
-            if(el) el.innerText = new Date().toLocaleDateString('ms-MY', options);
-        }
-
-        function logout() { localStorage.clear(); window.location.href = 'login.html'; }
-
-        // Sidebar logic
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('drawerOverlay');
         function toggleSidebar(show) {
@@ -380,6 +401,96 @@
         }
         document.getElementById('menuBtn').onclick = () => toggleSidebar(true);
         document.getElementById('closeBtn').onclick = () => toggleSidebar(false);
+        overlay.onclick = () => toggleSidebar(false);
+
+        const originalDashboardHTML = document.getElementById('app-root').innerHTML;
+
+        function loadDashboard() {
+            document.getElementById('app-root').innerHTML = originalDashboardHTML;
+            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('nav-active'));
+            document.getElementById('dashBtn')?.classList.add('nav-active');
+            initDashboard();
+            toggleSidebar(false);
+            window.scrollTo(0, 0);
+        }
+
+        async function loadPage(page, element) {
+            try {
+                const appRoot = document.getElementById('app-root');
+                appRoot.style.opacity = '0.5'; 
+                const response = await fetch(page);
+                if (!response.ok) throw new Error("Fail tidak dijumpai");
+                const html = await response.text();
+                appRoot.innerHTML = html;
+                appRoot.style.opacity = '1';
+                document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('nav-active'));
+                if(element) element.classList.add('nav-active');
+                toggleSidebar(false);
+                
+                const scripts = appRoot.querySelectorAll('script');
+                scripts.forEach(oldScript => {
+                    const newScript = document.createElement('script');
+                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
+                window.scrollTo(0, 0);
+            } catch (err) {
+                appRoot.innerHTML = `<div class="text-center py-20 dark:text-white">Ralat: Fail <b>${page}</b> tidak ditemui.</div>`;
+                appRoot.style.opacity = '1';
+            }
+        }
+
+        function initDashboard() {
+            const userData = JSON.parse(localStorage.getItem('siswaklik_user'));
+            if(userData) {
+                document.getElementById('welcomeText').innerText = `Hai, ${userData.given_name || userData.name.split(' ')[0]}!`;
+                document.getElementById('userSubtext').innerText = userData.email;
+                if(document.getElementById('userNameDisplay')) {
+                    document.getElementById('userNameDisplay').innerText = userData.name.split(' ')[0];
+                }
+                if (userData.picture) {
+                    const avatar = document.getElementById('userAvatar');
+                    avatar.src = userData.picture;
+                    avatar.classList.remove('hidden');
+                    document.getElementById('defaultIcon').classList.add('hidden');
+                }
+            }
+            updateAcademicStats();
+            renderExamsFromCloud();
+            updateDate();
+        }
+
+        function updateDate() {
+            const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+            const el = document.getElementById('systemDate');
+            if(el) el.innerText = new Date().toLocaleDateString('ms-MY', options);
+        }
+
+        async function updateAcademicStats() {
+            try {
+                const response = await fetch('kalendar_akademik.json');
+                if (!response.ok) return;
+                const data = await response.json();
+                const allEvents = [];
+                ['semester_1', 'semester_2', 'semester_3'].forEach(semKey => {
+                    if(data.aktiviti_akademik[semKey]) {
+                        data.aktiviti_akademik[semKey].forEach(item => {
+                            allEvents.push({ title: item.perkara, rawDate: item.tarikh, semester: semKey.replace('_', ' ').toUpperCase(), startDate: new Date() });
+                        });
+                    }
+                });
+                
+                if(document.getElementById('semesterStatus')) {
+                    document.getElementById('semesterStatus').innerText = allEvents[0]?.title || "Semester Aktif";
+                    document.getElementById('sessionTag').innerText = `Sesi ${data.sesi}`;
+                    document.getElementById('progressBar').style.width = "45%"; // Contoh statik
+                    document.getElementById('progressText').innerText = "45%";
+                }
+            } catch (e) { console.error("Stats Error:", e); }
+        }
+
+        function logout() { localStorage.clear(); window.location.href = 'login.html'; }
 
         window.onload = () => {
             if (!localStorage.getItem('siswaklik_user')) {
@@ -390,7 +501,5 @@
             }
         };
     </script>
-    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
-    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
 </body>
 </html>
