@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Waktu Solat Pintar - SiswaKlik</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script>
+        // Konfigurasi Tailwind untuk menyokong Dark Mode melalui class
         tailwind.config = {
             darkMode: 'class',
             theme: {
@@ -22,57 +23,49 @@
         }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.3s ease; }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; transition: background-color 0.3s ease; }
         .prayer-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .prayer-card:hover { transform: translateY(-5px); }
-        .blue-pop-shadow { box-shadow: 0 10px 25px -5px rgba(0, 87, 255, 0.2); }
-        
-        /* Custom Scrollbar for dark mode */
-        .dark ::-webkit-scrollbar { width: 8px; }
-        .dark ::-webkit-scrollbar-track { background: #0F172A; }
-        .dark ::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-transparent p-2 md:p-4 dark:text-slate-100">
+<body class="bg-slate-50 dark:bg-transparent p-4">
 
-    <div class="max-w-4xl mx-auto bg-white dark:bg-darkCard p-6 md:p-8 rounded-[2.5rem] shadow-xl border border-slate-100 dark:border-slate-700">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
+    <div class="max-w-4xl mx-auto bg-white dark:bg-darkCard p-6 rounded-[2.5rem] shadow-xl border border-emerald-50 dark:border-slate-700 transition-colors duration-300">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
             <div class="flex items-center gap-4">
-                <div class="p-4 bg-brandBlue text-brandYellow rounded-2xl shadow-lg blue-pop-shadow">
+                <div class="p-4 bg-emerald-500 text-white rounded-2xl shadow-lg shadow-emerald-200 dark:shadow-none">
                     <i class="fas fa-kaaba text-2xl"></i>
                 </div>
                 <div>
                     <h3 class="font-black text-slate-800 dark:text-white text-xl uppercase tracking-tight">Waktu Solat Pintar</h3>
                     <div class="flex items-center gap-2 mt-1">
-                        <span id="statusZon" class="text-[10px] text-brandBlue dark:text-brandYellow font-bold px-3 py-1 bg-brandBlue/5 dark:bg-brandYellow/10 rounded-full border border-brandBlue/10 dark:border-brandYellow/20 uppercase tracking-widest">
-                            Memuatkan...
-                        </span>
+                        <span id="statusZon" class="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold px-3 py-1 bg-emerald-50 dark:bg-emerald-900/30 rounded-full border border-emerald-100 dark:border-emerald-800 uppercase tracking-widest">Memuatkan...</span>
                     </div>
                 </div>
             </div>
             
-            <div class="flex flex-col md:items-end bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-700 w-full md:w-auto">
-                <p id="tarikhMasihi" class="text-sm font-black text-slate-700 dark:text-white">-- --- ----</p>
-                <p id="tarikhHijri" class="text-[11px] font-bold text-brandBlue dark:text-brandYellow uppercase tracking-wider mt-1">-- ------- ----</p>
+            <div class="flex flex-col items-end">
+                <p id="tarikhMasihi" class="text-sm font-bold text-slate-600 dark:text-slate-300">-- --- ----</p>
+                <p id="tarikhHijri" class="text-[11px] font-bold text-emerald-600 dark:text-brandYellow uppercase tracking-wider">-- ------- ----</p>
             </div>
         </div>
 
-        <div id="prayerContainer" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-            <div class="col-span-full py-12 text-center text-slate-400 dark:text-slate-500">
-                <i class="fas fa-circle-notch fa-spin text-3xl mb-3 text-brandBlue"></i>
-                <p class="text-xs font-bold uppercase tracking-widest">Menghubungi API Waktu Solat...</p>
+        <div id="prayerContainer" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">
+            <div class="col-span-full py-10 text-center text-slate-400 dark:text-slate-500">
+                <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                <p class="text-xs font-bold uppercase">Menghubungi API Waktu Solat...</p>
             </div>
         </div>
 
-        <div class="bg-slate-50 dark:bg-slate-900/40 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800">
+        <div class="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-3xl border border-slate-100 dark:border-slate-700">
             <div class="flex items-center gap-3 mb-4">
-                <div class="w-8 h-8 bg-brandBlue rounded-xl flex items-center justify-center shadow-sm text-brandYellow">
-                    <i class="fas fa-map-marker-alt text-xs"></i>
+                <div class="w-8 h-8 bg-white dark:bg-slate-700 rounded-xl flex items-center justify-center shadow-sm text-emerald-500 dark:text-brandYellow">
+                    <i class="fas fa-map-marker-alt text-sm"></i>
                 </div>
                 <p class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Tetapan Lokasi & Zon</p>
             </div>
-            <select id="zonSelect" onchange="kemaskiniWaktu()" class="w-full bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl px-5 py-4 text-sm font-bold text-slate-700 dark:text-slate-200 focus:border-brandBlue dark:focus:border-brandYellow focus:ring-0 transition-all outline-none appearance-none cursor-pointer">
+            <select id="zonSelect" onchange="kemaskiniWaktu()" class="w-full bg-white dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-700 rounded-2xl px-5 py-3 text-sm font-bold text-slate-700 dark:text-slate-200 focus:border-emerald-500 dark:focus:border-brandYellow focus:ring-0 transition-all outline-none">
                 <optgroup label="Selangor" class="dark:bg-darkCard">
                     <option value="SGR01" selected>Gombak, Petaling, Sepang, Hulu Langat, Hulu Selangor, Shah Alam</option>
                     <option value="SGR02">Klang, Kuala Langat</option>
@@ -93,8 +86,8 @@
     </div>
 
     <script>
-        // Synchronize Dark Mode with Parent (index.html)
-        function applyDarkMode() {
+        // Logik Sinkronisasi Dark Mode dengan Parent (index.html)
+        function applyTheme() {
             if (localStorage.getItem('siswaklik_theme') === 'dark' || 
                 (!localStorage.getItem('siswaklik_theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 document.documentElement.classList.add('dark');
@@ -102,9 +95,7 @@
                 document.documentElement.classList.remove('dark');
             }
         }
-        applyDarkMode();
-        // Listen for changes from parent
-        window.addEventListener('storage', applyDarkMode);
+        applyTheme();
 
         const prayerNames = [
             { id: 'fajr', label: 'Subuh', icon: 'fa-cloud-moon' },
@@ -137,10 +128,10 @@
                         let masaFormat = masa.substring(0, 5);
 
                         return `
-                            <div class="prayer-card group bg-slate-50 dark:bg-slate-800/40 hover:bg-brandBlue dark:hover:bg-brandBlue p-5 rounded-[2rem] border border-slate-100 dark:border-slate-700 hover:border-brandBlue transition-all duration-300">
-                                <i class="fas ${s.icon} text-brandBlue dark:text-brandYellow group-hover:text-brandYellow mb-3 text-lg transition-colors"></i>
-                                <p class="text-[10px] font-black text-slate-400 dark:text-slate-500 group-hover:text-white/80 uppercase mb-1 tracking-widest">${s.label}</p>
-                                <p class="text-xl font-black text-brandBlue dark:text-white group-hover:text-brandYellow transition-colors">${masaFormat}</p>
+                            <div class="prayer-card group bg-slate-50 dark:bg-slate-800/40 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 p-4 rounded-[2rem] border border-slate-100 dark:border-slate-700 hover:border-emerald-200 dark:hover:border-emerald-500/50 text-center transition-all duration-300">
+                                <i class="fas ${s.icon} text-emerald-300 dark:text-emerald-500/50 group-hover:text-emerald-500 dark:group-hover:text-brandYellow mb-2 transition-colors"></i>
+                                <p class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase mb-1 tracking-widest">${s.label}</p>
+                                <p class="text-xl font-black text-emerald-700 dark:text-emerald-400 group-hover:dark:text-brandYellow">${masaFormat}</p>
                             </div>
                         `;
                     }).join('');
@@ -148,15 +139,21 @@
             } catch (err) {
                 console.error(err);
                 container.innerHTML = `
-                    <div class="col-span-full bg-red-50 dark:bg-red-900/10 p-8 rounded-3xl border border-red-100 dark:border-red-900/20 text-center">
-                        <i class="fas fa-exclamation-triangle text-red-500 mb-3 text-2xl"></i>
+                    <div class="col-span-full bg-red-50 dark:bg-red-900/20 p-6 rounded-3xl border border-red-100 dark:border-red-900/30 text-center">
+                        <i class="fas fa-exclamation-triangle text-red-400 mb-2 text-xl"></i>
                         <p class="text-red-600 dark:text-red-400 font-bold text-sm">Gagal memuatkan data solat.</p>
-                        <button onclick="kemaskiniWaktu()" class="mt-4 text-xs bg-brandBlue text-brandYellow px-8 py-3 rounded-xl font-bold uppercase hover:scale-105 transition-all blue-pop-shadow">Cuba Lagi</button>
+                        <button onclick="kemaskiniWaktu()" class="mt-3 text-xs bg-red-500 text-white px-6 py-2 rounded-full font-bold uppercase hover:bg-red-600 shadow-lg shadow-red-100 dark:shadow-none">Cuba Lagi</button>
                     </div>`;
             }
         }
 
+        // Jalankan fungsi semasa mula
         kemaskiniWaktu();
+
+        // Pantau perubahan localStorage untuk tema jika dibuka dalam iframe
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'siswaklik_theme') applyTheme();
+        });
     </script>
 </body>
 </html>
