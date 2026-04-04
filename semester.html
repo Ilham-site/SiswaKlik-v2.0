@@ -18,7 +18,7 @@
 <body class="bg-[#F8FAFC] p-4 md:p-8 lg:p-10">
 
 <div class="max-w-5xl mx-auto mb-6">
-    <button onclick="goToHome('https://siswaklik-v2-0.pages.dev', this)" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-2xl text-slate-700 font-bold text-sm hover:bg-slate-50 transition-all shadow-sm">
+    <button onclick="goToHome()" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-2xl text-slate-700 font-bold text-sm hover:bg-slate-50 transition-all shadow-sm">
         <i class="fas fa-arrow-left text-blue-600"></i> Dashboard Utama
     </button>
 </div>
@@ -73,12 +73,9 @@
 <script>
     const JSON_URL = 'kalendar_akademik.json';
 
+    // Fungsi goToHome dikemaskini mengikut permintaan anda
     function goToHome() {
-        if (window.parent && typeof window.parent.loadPage === 'function') {
-            window.parent.loadPage('index.html');
-        } else {
-            window.location.href = 'index.html';
-        }
+        window.location.href = 'https://siswaklik-v2-0.pages.dev/';
     }
 
     // Pemetaan ikon berdasarkan kata kunci aktiviti
@@ -115,16 +112,13 @@
     }
 
     function parseDate(dateStr) {
-        // Contoh format: "6 Okt - 16 Nov. 2025" atau "26 Jan - 15 Feb. 2026"
         const parts = dateStr.split(/[-–]/);
         const startPart = parts[0].trim();
         const endPart = parts[parts.length - 1].trim();
         
-        // Ambil tahun dari bahagian akhir string
         const yearMatch = dateStr.match(/\d{4}/);
         const year = yearMatch ? yearMatch[0] : new Date().getFullYear();
 
-        // Tukar bulan Melayu ringkas ke format English untuk Date object
         const monthMap = { 
             'Jan': 'Jan', 'Feb': 'Feb', 'Mac': 'Mar', 'Apr': 'Apr', 'Mei': 'May', 'Jun': 'Jun',
             'Jul': 'Jul', 'Ogos': 'Aug', 'Sept': 'Sep', 'Okt': 'Oct', 'Nov': 'Nov', 'Dis': 'Dec'
@@ -138,9 +132,9 @@
             }
         }
         
-        // Jika startPart tidak ada bulan (e.g. "19 Sept - 5 Okt"), ambil bulan dari endPart
         if (!Object.keys(monthMap).some(m => startPart.includes(m))) {
-            const monthFromEnd = endPart.match(/[A-Za-z]+/)[0];
+            const monthFromEndMatch = endPart.match(/[A-Za-z]+/);
+            const monthFromEnd = monthFromEndMatch ? monthFromEndMatch[0] : "";
             processedStart += ` ${monthMap[monthFromEnd] || monthFromEnd}`;
         }
 
@@ -154,17 +148,19 @@
         const semesters = ['semester_1', 'semester_2', 'semester_3'];
 
         semesters.forEach(semKey => {
-            const semLabel = semKey.replace('_', ' ').toUpperCase();
-            data.aktiviti_akademik[semKey].forEach(item => {
-                allEvents.push({
-                    title: item.perkara,
-                    rawDate: item.tarikh,
-                    duration: item.tempoh,
-                    semester: semLabel,
-                    icon: getIcon(item.perkara),
-                    startDate: parseDate(item.tarikh)
+            if (data.aktiviti_akademik[semKey]) {
+                const semLabel = semKey.replace('_', ' ').toUpperCase();
+                data.aktiviti_akademik[semKey].forEach(item => {
+                    allEvents.push({
+                        title: item.perkara,
+                        rawDate: item.tarikh,
+                        duration: item.tempoh,
+                        semester: semLabel,
+                        icon: getIcon(item.perkara),
+                        startDate: parseDate(item.tarikh)
+                    });
                 });
-            });
+            }
         });
 
         renderUI(allEvents);
@@ -174,7 +170,6 @@
         const container = document.getElementById('calendarList');
         const now = new Date();
         
-        // Cari aktiviti yang sedang berlangsung atau yang terdekat
         let activeEvent = events[0];
         let passedCount = 0;
 
@@ -185,17 +180,14 @@
             }
         });
 
-        // Update Hero Section
         document.getElementById('currentActivity').innerText = activeEvent.title;
         document.getElementById('dateRange').innerText = `${activeEvent.rawDate} (${activeEvent.semester})`;
         
-        // Progress bar logic
         const progress = Math.round((passedCount / events.length) * 100);
         document.getElementById('progressText').innerText = progress + "%";
         document.getElementById('progressBar').style.width = progress + "%";
         document.getElementById('weekStatus').innerText = `${activeEvent.semester} • SEDANG BERLANGSUNG`;
 
-        // Render Cards
         container.innerHTML = events.map(item => {
             const isActive = (item === activeEvent);
             const isPast = now > item.startDate && !isActive;
