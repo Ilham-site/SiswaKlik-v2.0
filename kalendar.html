@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ms">
+<html lang="ms" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,86 +7,120 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <script>
+        // Tailwind Dark Mode Configuration (Selaras dengan index.html)
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brandBlue: '#0057FF',
+                        brandYellow: '#FFD700',
+                        darkBg: '#0F172A',
+                        darkCard: '#1E293B'
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Amiri:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f0f4f8;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='%232563eb' fill-opacity='0.04'%3E%3Cpath d='M50 5L53.5 35L85 35L60 55L70 85L50 65L30 85L40 55L15 35L46.5 35z'/%3E%3C/g%3E%3C/svg%3E");
-            min-height: 100vh;
+            transition: background-color 0.3s ease;
         }
 
         .content-embed {
             width: 100%;
             border: none;
             border-radius: 2rem;
-            background: white;
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
         }
 
         .user-profile-glow {
-            box-shadow: 0 0 15px rgba(37, 99, 235, 0.2);
+            box-shadow: 0 0 15px rgba(0, 87, 255, 0.3);
+        }
+
+        /* Corak Latar Belakang Halus */
+        .bg-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='%230057FF' fill-opacity='0.03'%3E%3Cpath d='M50 5L53.5 35L85 35L60 55L70 85L50 65L30 85L40 55L15 35L46.5 35z'/%3E%3C/g%3E%3C/svg%3E");
         }
     </style>
 </head>
-<body class="p-4 md:p-10">
+<body class="bg-slate-50 dark:bg-darkBg text-slate-900 dark:text-slate-100 min-h-screen p-4 md:p-10 bg-pattern">
 
-    <div class="max-w-5xl mx-auto space-y-10">
+    <div class="max-w-5xl mx-auto space-y-10 animate-fade">
         
-        <header class="flex flex-col md:flex-row justify-between items-center bg-white/80 p-6 rounded-[2.5rem] border border-white backdrop-blur-md shadow-sm">
+        <header class="flex flex-col md:flex-row justify-between items-center bg-white/80 dark:bg-darkCard/80 p-6 rounded-[2.5rem] border border-white dark:border-slate-700 backdrop-blur-md shadow-sm">
             <div class="flex items-center gap-4">
                 <div id="userImageContainer" class="relative">
-                    <div class="bg-blue-600 p-4 rounded-3xl shadow-lg shadow-blue-200" id="defaultIcon">
-                        <i class="fas fa-user text-white text-2xl"></i>
+                    <div class="bg-brandBlue p-4 rounded-3xl shadow-lg blue-pop-shadow" id="defaultIcon">
+                        <i class="fas fa-user text-brandYellow text-2xl"></i>
                     </div>
-                    <img id="userAvatar" class="hidden w-14 h-14 rounded-2xl object-cover border-2 border-blue-500 p-0.5 user-profile-glow" src="" alt="Profile">
+                    <img id="userAvatar" class="hidden w-14 h-14 rounded-2xl object-cover border-2 border-brandYellow p-0.5 user-profile-glow" src="" alt="Profile">
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black text-slate-800 dark:text-white tracking-tight" id="welcomeText">Selamat Datang!</h1>
+                    <p class="text-xs font-bold text-brandBlue dark:text-brandYellow uppercase tracking-widest" id="userSubtext">Memuatkan profil...</p>
                 </div>
             </div>
 
             <div class="mt-4 md:mt-0 flex items-center gap-3">
-                <button id="syncBtn" onclick="syncGoogleCalendar()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2">
-                    <i class="fas fa-sync-alt"></i> Sync Google
+                <button id="syncBtn" onclick="syncGoogleCalendar()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-lg shadow-emerald-200 dark:shadow-none">
+                    <i class="fas fa-sync-alt"></i> SYNC GOOGLE
                 </button>
             </div>
         </header>
 
         <div class="section-card space-y-4">
             <div class="flex items-center gap-2 px-4">
-                <div class="h-6 w-1 bg-blue-600 rounded-full"></div>
-                <h2 class="font-extrabold text-slate-700 uppercase tracking-tighter">Perancangan Aktiviti & Akademik</h2>
+                <div class="h-6 w-1.5 bg-brandBlue dark:bg-brandYellow rounded-full"></div>
+                <h2 class="font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-tighter">Perancangan Aktiviti & Akademik</h2>
             </div>
             
-            <div class="content-embed overflow-hidden">
+            <div class="content-embed overflow-hidden bg-white dark:bg-darkCard border border-slate-100 dark:border-slate-700">
                 <iframe src="event.html" id="eventFrame" scrolling="no" onload="adjustHeight(this)" class="w-full border-0 min-h-[600px]"></iframe>
             </div>
         </div>
 
         <div class="section-card space-y-4">
             <div class="flex items-center gap-2 px-4">
-                <div class="h-6 w-1 bg-emerald-500 rounded-full"></div>
-                <h2 class="font-extrabold text-slate-700 uppercase tracking-tighter">Waktu Solat & Ibadah</h2>
+                <div class="h-6 w-1.5 bg-emerald-500 rounded-full"></div>
+                <h2 class="font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-tighter">Waktu Solat & Ibadah</h2>
             </div>
 
-            <div class="content-embed overflow-hidden">
+            <div class="content-embed overflow-hidden bg-white dark:bg-darkCard border border-slate-100 dark:border-slate-700">
                 <iframe src="solat.html" id="solatFrame" scrolling="no" onload="adjustHeight(this)" class="w-full border-0 min-h-[400px]"></iframe>
             </div>
         </div>
 
         <footer class="text-center pt-10 pb-20">
-            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">
+            <p class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em]">
                 SiswaKlik Management System &copy; 2026
             </p>
         </footer>
     </div>
 
     <script>
-        // 1. Ambil data profil dari LocalStorage (Data dari login.html)
+        // --- Dark Mode Sync ---
+        function applyTheme() {
+            if (localStorage.getItem('siswaklik_theme') === 'dark' || (!localStorage.getItem('siswaklik_theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+
+        // --- Logik Profil ---
         document.addEventListener('DOMContentLoaded', function() {
+            applyTheme();
             const userData = JSON.parse(localStorage.getItem('siswaklik_user'));
             
             if (userData) {
-                document.getElementById('welcomeText').innerText = `Hai, ${userData.given_name || userData.name}!`;
+                document.getElementById('welcomeText').innerText = `Hai, ${userData.given_name || userData.name.split(' ')[0]}!`;
                 document.getElementById('userSubtext').innerText = userData.email;
                 
                 if (userData.picture) {
@@ -96,47 +130,47 @@
                     document.getElementById('defaultIcon').classList.add('hidden');
                 }
             } else {
-                // Jika tiada data, redirect balik ke login
                 window.location.href = 'login.html';
             }
         });
 
+        // --- Logik Google Sync ---
         function syncGoogleCalendar() {
             const token = localStorage.getItem('siswaklik_access_token');
             if (token) {
-                document.getElementById('eventFrame').contentWindow.postMessage({ 
+                const frame = document.getElementById('eventFrame');
+                frame.contentWindow.postMessage({ 
                     type: 'GOOGLE_AUTH_TOKEN', 
                     token: token 
                 }, '*');
-                document.getElementById('eventFrame').contentWindow.postMessage({ action: 'SYNC_CALENDAR' }, '*');
+                frame.contentWindow.postMessage({ action: 'SYNC_CALENDAR' }, '*');
             } else {
                 alert("Sila log masuk semula untuk penyelarasan Google Calendar.");
                 window.location.href = 'login.html';
             }
         }
 
-        // 2. Pelarasan Ketinggian Iframe (Dipbaiki: Tidak lagi memanjang tanpa henti)
+        // --- Pelarasan Ketinggian Iframe ---
         function adjustHeight(iframe) {
             try {
                 if (iframe.contentWindow && iframe.contentWindow.document.body) {
-                    // Gunakan offsetHeight untuk mendapatkan ketinggian tepat tanpa tambahan berulang
                     const newHeight = iframe.contentWindow.document.documentElement.scrollHeight;
                     if (newHeight > 0) {
                         iframe.style.height = newHeight + 'px';
                     }
                 }
             } catch (err) {
-                // Abaikan ralat cross-origin jika dijalankan secara lokal
+                // Cross-origin errors ignored in local dev
             }
         }
 
-        // Jalankan pelarasan apabila saiz window berubah
+        // Window resize listener
         window.addEventListener('resize', () => {
             adjustHeight(document.getElementById('eventFrame'));
             adjustHeight(document.getElementById('solatFrame'));
         });
 
-        // Gunakan pemerhatian yang lebih cekap berbanding setInterval yang agresif
+        // Polling pelarasan (3 saat sekali)
         setInterval(() => {
             adjustHeight(document.getElementById('eventFrame'));
             adjustHeight(document.getElementById('solatFrame'));
