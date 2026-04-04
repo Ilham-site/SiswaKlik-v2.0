@@ -45,7 +45,6 @@
         .animate-fade { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Mobile Optimization */
         @media (max-width: 640px) {
             .mobile-bottom-nav { border-top: 1px solid rgba(0, 87, 255, 0.1); }
         }
@@ -122,7 +121,7 @@
             <header class="flex flex-col md:flex-row justify-between items-start gap-4">
                 <div>
                     <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white">Selamat Kembali, <span id="userNameDisplay" class="text-brandBlue dark:text-brandYellow">Pelajar</span>!</h1>
-                    <p class="text-slate-500 dark:text-slate-400 font-medium mt-1">Sistem dihubungkan dengan Google Sheets (KMJP Cloud).</p>
+                    <p class="text-slate-500 dark:text-slate-400 font-medium mt-1">Hari ini adalah hari yang hebat untuk belajar sesuatu yang baru.</p>
                 </div>
                 <div id="systemDate" class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-full"></div>
             </header>
@@ -132,7 +131,7 @@
                     <div class="bg-white dark:bg-darkCard p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-slate-100 dark:border-slate-700 h-full">
                         <div class="flex flex-wrap justify-between items-center gap-4 mb-6">
                             <h2 class="text-xl font-black text-slate-800 dark:text-white flex items-center gap-2">
-                                <i class="fas fa-file-signature text-brandBlue dark:text-brandYellow"></i> Jadual Peperiksaan (Cloud)
+                                <i class="fas fa-file-signature text-brandBlue dark:text-brandYellow"></i> Jadual Peperiksaan 
                             </h2>
                             <button onclick="document.getElementById('kmjpInput').click()" class="text-xs font-bold bg-brandBlue text-brandYellow px-5 py-3 rounded-xl hover:scale-105 transition-all blue-pop-shadow">
                                 <i class="fas fa-file-import mr-2"></i> KEMASKINI KMJP
@@ -142,7 +141,7 @@
                         <div id="examContainer" class="space-y-4">
                             <div class="text-center py-10">
                                 <div class="animate-spin inline-block w-8 h-8 border-4 border-brandBlue border-t-transparent rounded-full mb-4"></div>
-                                <p class="text-slate-400 text-sm font-medium italic">Menghubungkan ke Google Sheets...</p>
+                                <p class="text-slate-400 text-sm font-medium italic">Menyegerak...</p>
                             </div>
                         </div>
                     </div>
@@ -182,7 +181,7 @@
                                 <p id="nextActivityDate" class="text-[10px] text-brandBlue dark:text-brandYellow mt-1 uppercase font-bold tracking-wider">Tiada Data</p>
                             </div>
                         </div>
-                        <button onclick="window.location.href='#'" class="mt-4 w-full text-center py-4 bg-brandBlue/5 dark:bg-brandYellow/10 text-brandBlue dark:text-brandYellow rounded-2xl text-xs font-black hover:bg-brandBlue hover:text-brandYellow transition-all border border-brandBlue/20 uppercase tracking-wide">
+                        <button onclick="loadPage('semester.html',this)" class="mt-4 w-full text-center py-4 bg-brandBlue/5 dark:bg-brandYellow/10 text-brandBlue dark:text-brandYellow rounded-2xl text-xs font-black hover:bg-brandBlue hover:text-brandYellow transition-all border border-brandBlue/20 uppercase tracking-wide">
                             Kalendar Akademik <i class="fas fa-arrow-right ml-2"></i>
                         </button>
                     </div>
@@ -200,69 +199,45 @@
 
     <script>
         // --- Google API Config ---
-        const CLIENT_ID = '755048052549-8tpra9hbicin61psv2pb0tvvjk9q2thr.apps.googleusercontent.com';
-        const SCOPES = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.file';
-        let tokenClient;
         let gapiInited = false;
-        let gisInited = false;
-
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
-        // --- Google SDK Initialization ---
-        function gapiLoaded() { gapi.load('client', intializeGapiClient); }
-        async function intializeGapiClient() {
+        // --- GAPI Loader ---
+        function gapiLoaded() { gapi.load('client', initializeGapiClient); }
+
+        async function initializeGapiClient() {
             await gapi.client.init({
                 discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4', 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
             });
-            gapiInited = true;
-            checkBeforeStart();
-        }
-        function gisLoaded() {
-            tokenClient = google.accounts.oauth2.initTokenClient({
-                client_id: CLIENT_ID,
-                scope: SCOPES,
-                callback: '', // defined during token request
-            });
-            gisInited = true;
-            checkBeforeStart();
-        }
-        function checkBeforeStart() { if (gapiInited && gisInited) initDashboard(); }
-
-        async function getAccessToken() {
-            return new Promise((resolve, reject) => {
-                tokenClient.callback = (resp) => {
-                    if (resp.error !== undefined) reject(resp);
-                    resolve(resp.access_token);
-                };
-                if (gapi.client.getToken() === null) {
-                    tokenClient.requestAccessToken({prompt: 'consent'});
-                } else {
-                    tokenClient.requestAccessToken({prompt: ''});
-                }
-            });
+            
+            // Gunakan token sedia ada daripada login.html
+            const token = localStorage.getItem('siswaklik_access_token');
+            if (token) {
+                gapi.client.setToken({ access_token: token });
+                gapiInited = true;
+                initDashboard();
+            } else {
+                window.location.href = 'login.html';
+            }
         }
 
         // --- Spreadsheet Management ---
         async function getOrCreateSpreadsheet() {
-            const folderName = "SiswaKlik v2.0";
+            const folderId = localStorage.getItem('siswaklik_drive_folder_id');
             const fileName = "KMJP v2.0";
             
-            let res = await gapi.client.drive.files.list({ q: `name='${folderName}' and mimeType='application/vnd.google-apps.folder' and trashed=false` });
-            let folderId = res.result.files.length > 0 ? res.result.files[0].id : null;
-            
-            if (!folderId) {
-                const folderMetadata = { name: folderName, mimeType: 'application/vnd.google-apps.folder' };
-                const folder = await gapi.client.drive.files.create({ resource: folderMetadata, fields: 'id' });
-                folderId = folder.result.id;
-            }
-
-            res = await gapi.client.drive.files.list({ q: `name='${fileName}' and parents in '${folderId}' and trashed=false` });
+            // Cari fail dalam folder SiswaKlik
+            let res = await gapi.client.drive.files.list({ 
+                q: `name='${fileName}' and '${folderId}' in parents and trashed=false` 
+            });
             let fileId = res.result.files.length > 0 ? res.result.files[0].id : null;
 
             if (!fileId) {
                 const ssMetadata = { properties: { title: fileName } };
                 const spreadsheet = await gapi.client.sheets.spreadsheets.create({ resource: ssMetadata });
                 fileId = spreadsheet.result.spreadsheetId;
+                
+                // Alihkan fail ke dalam folder SiswaKlik
                 await gapi.client.drive.files.update({ fileId: fileId, addParents: folderId, fields: 'id' });
                 
                 const headers = [['KOD KURSUS', 'SET KURSUS', 'TAJUK KURSUS', 'TARIKH', 'MASA', 'TEMPOH', 'TEMPAT', 'MEJA']];
@@ -276,22 +251,19 @@
             return fileId;
         }
 
-        // --- KMJP Logic (Cloud Integrated) ---
+        // --- KMJP Logic (Direct Token Implementation) ---
         async function processKMJP(input) {
             const file = input.files[0];
             if (!file) return;
             
             try {
                 Swal.fire({ 
-                    title: 'Menghubungkan...', 
-                    text: 'Sila sahkan akaun Google anda', 
+                    title: 'Memproses PDF...', 
+                    text: 'Menganalisa data jadual UKM', 
                     allowOutsideClick: false, 
                     didOpen: () => Swal.showLoading() 
                 });
                 
-                await getAccessToken();
-                
-                Swal.update({ title: 'Mengekstrak PDF...', text: 'Menganalisa data jadual UKM' });
                 const reader = new FileReader();
                 reader.onload = async function() {
                     const typedarray = new Uint8Array(this.result);
@@ -304,7 +276,6 @@
                     }
                     
                     const cleanText = text.replace(/\s+/g, ' ');
-                    // Regex KMJP UKM Format
                     const pattern = /([A-Z]{4}\d{4})\s+(\d+)\s+(.*?)\s+(\d{2}\/\d{2}\/\d{4})\s+(\d{2}:\d{2})\s+(\d+\.\d+)\s+(.*?)\s+(\d+)/gi;
                     const rows = [];
                     let m;
@@ -376,10 +347,8 @@
                     </div>`;
                 }).join('');
             } catch (err) {
-                container.innerHTML = `
-                <button onclick="getAccessToken().then(renderExamsFromCloud)" class="w-full p-6 border-2 border-dashed border-brandBlue/30 rounded-3xl text-brandBlue font-bold hover:bg-brandBlue/5 transition">
-                    <i class="fas fa-sync-alt mr-2"></i> Klik untuk Sambung Google Sheets
-                </button>`;
+                console.error("Fetch Error:", err);
+                container.innerHTML = `<p class="text-center text-red-500 text-xs">Gagal memuatkan data dari cloud.</p>`;
             }
         }
 
@@ -457,7 +426,7 @@
                 }
             }
             updateAcademicStats();
-            renderExamsFromCloud();
+            if(gapiInited) renderExamsFromCloud();
             updateDate();
         }
 
@@ -472,19 +441,12 @@
                 const response = await fetch('kalendar_akademik.json');
                 if (!response.ok) return;
                 const data = await response.json();
-                const allEvents = [];
-                ['semester_1', 'semester_2', 'semester_3'].forEach(semKey => {
-                    if(data.aktiviti_akademik[semKey]) {
-                        data.aktiviti_akademik[semKey].forEach(item => {
-                            allEvents.push({ title: item.perkara, rawDate: item.tarikh, semester: semKey.replace('_', ' ').toUpperCase(), startDate: new Date() });
-                        });
-                    }
-                });
                 
+                // Pengiraan statik atau dinamik berdasarkan JSON
                 if(document.getElementById('semesterStatus')) {
-                    document.getElementById('semesterStatus').innerText = allEvents[0]?.title || "Semester Aktif";
+                    document.getElementById('semesterStatus').innerText = "Semester Aktif";
                     document.getElementById('sessionTag').innerText = `Sesi ${data.sesi}`;
-                    document.getElementById('progressBar').style.width = "45%"; // Contoh statik
+                    document.getElementById('progressBar').style.width = "45%"; 
                     document.getElementById('progressText').innerText = "45%";
                 }
             } catch (e) { console.error("Stats Error:", e); }
@@ -497,7 +459,6 @@
                 window.location.href = 'login.html';
             } else {
                 gapiLoaded();
-                gisLoaded();
             }
         };
     </script>
