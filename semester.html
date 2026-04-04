@@ -1,56 +1,82 @@
 <!DOCTYPE html>
-<html lang="ms">
+<html lang="ms" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SiswaKlik - Kalendar Akademik Pintar</title>
+    <title>SiswaKlik | Kalendar Akademik Pintar</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Tailwind Configuration selaras dengan index.html
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brandBlue: '#0057FF',
+                        brandYellow: '#FFD700',
+                        darkBg: '#0F172A',
+                        darkCard: '#1E293B'
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; }
-        .card-gradient { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.3s ease; }
+        
+        /* Glass Effect */
+        .glass-nav { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); }
+        .dark .glass-nav { background: rgba(15, 23, 42, 0.9); border-color: #334155; }
+        
+        .blue-pop-shadow { box-shadow: 0 10px 25px -5px rgba(0, 87, 255, 0.4); }
         .animate-fade-up { animation: fadeUp 0.5s ease-out; }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="bg-[#F8FAFC] p-4 md:p-8 lg:p-10">
+<body class="bg-slate-50 dark:bg-darkBg text-slate-900 dark:text-slate-100 min-h-screen p-4 md:p-8 lg:p-10">
 
-<div class="max-w-5xl mx-auto mb-6">
-    <button onclick="goToHome()" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-2xl text-slate-700 font-bold text-sm hover:bg-slate-50 transition-all shadow-sm">
-        <i class="fas fa-arrow-left text-blue-600"></i> Dashboard Utama
+<div class="max-w-5xl mx-auto mb-6 flex justify-between items-center">
+    <button onclick="goToHome()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-white dark:bg-darkCard border border-slate-200 dark:border-slate-700 rounded-2xl text-brandBlue dark:text-brandYellow font-bold text-sm hover:scale-105 transition-all shadow-sm">
+        <i class="fas fa-arrow-left"></i> Dashboard Utama
+    </button>
+    
+    <button onclick="toggleDarkMode()" class="p-2.5 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-brandYellow border border-slate-200 dark:border-slate-700 hover:scale-110 transition-all shadow-sm">
+        <i class="fas fa-moon dark:hidden"></i>
+        <i class="fas fa-sun hidden dark:block"></i>
     </button>
 </div>
 
-<div class="max-w-5xl mx-auto space-y-6 animate-fade-up">
+<div class="max-w-5xl mx-auto space-y-8 animate-fade-up">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-            <h1 class="text-3xl font-black text-slate-900 tracking-tight">Kalendar Akademik UKM</h1>
-            <p class="text-slate-500 font-medium italic" id="sessionInfo">Memuatkan Data Sesi...</p>
+            <h1 class="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Kalendar Akademik <span class="text-brandBlue dark:text-brandYellow">UKM</span></h1>
+            <p class="text-slate-500 dark:text-slate-400 font-medium italic" id="sessionInfo">Memuatkan Data Sesi...</p>
         </div>
     </div>
 
-    <div class="card-gradient rounded-[3rem] p-8 md:p-10 text-white shadow-2xl relative overflow-hidden">
+    <div class="bg-brandBlue p-8 md:p-10 text-white rounded-[2.5rem] shadow-xl relative overflow-hidden blue-pop-shadow">
         <div class="relative z-10">
             <div class="flex items-center justify-between mb-8">
-                <span class="bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border border-white/10">Status Aktiviti Semasa</span>
-                <i class="fas fa-university text-white/30 text-2xl"></i>
+                <span class="bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border border-white/10 text-brandYellow">Status Aktiviti Semasa</span>
+                <i class="fas fa-university text-brandYellow/20 text-3xl"></i>
             </div>
             
             <div class="space-y-6">
                 <div>
-                    <h2 class="text-3xl md:text-5xl font-black mb-2" id="currentActivity">Memproses Kalendar...</h2>
-                    <p class="text-blue-100 text-lg font-medium" id="dateRange">-</p>
+                    <h2 class="text-3xl md:text-5xl font-black mb-2 text-white" id="currentActivity">Memproses Kalendar...</h2>
+                    <p class="text-brandYellow text-lg font-bold" id="dateRange">-</p>
                 </div>
                 
                 <div class="pt-4 border-t border-white/10">
                     <div class="flex justify-between items-end mb-3">
-                        <p class="text-[10px] font-bold uppercase tracking-widest text-blue-200" id="weekStatus">Sila Tunggu...</p>
-                        <p class="text-2xl font-black" id="progressText">0%</p>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-blue-100" id="weekStatus">Sila Tunggu...</p>
+                        <p class="text-2xl font-black text-brandYellow" id="progressText">0%</p>
                     </div>
                     <div class="w-full h-3 bg-black/20 rounded-full overflow-hidden">
-                        <div id="progressBar" class="h-full bg-emerald-400 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                        <div id="progressBar" class="h-full bg-brandYellow rounded-full transition-all duration-1000 shadow-[0_0_10px_#FFD700]" style="width: 0%"></div>
                     </div>
                 </div>
             </div>
@@ -58,10 +84,10 @@
         <i class="fas fa-calendar-check absolute -right-8 -bottom-8 text-white/5 text-[15rem]"></i>
     </div>
 
-    <div class="space-y-4">
+    <div class="space-y-6">
         <div class="flex items-center justify-between px-2">
-            <h3 class="font-extrabold text-slate-800 flex items-center gap-2 text-xl">
-                <i class="fas fa-stream text-blue-600"></i> Fasa Akademik Terperinci
+            <h3 class="font-extrabold text-slate-800 dark:text-white flex items-center gap-2 text-xl">
+                <i class="fas fa-stream text-brandBlue dark:text-brandYellow"></i> Fasa Akademik Terperinci
             </h3>
         </div>
         
@@ -73,12 +99,21 @@
 <script>
     const JSON_URL = 'kalendar_akademik.json';
 
-    // Fungsi navigasi ke laman utama SiswaKlik
+    // Logik Dark Mode
+    function toggleDarkMode() {
+        document.documentElement.classList.toggle('dark');
+        const isDark = document.documentElement.classList.contains('dark');
+        localStorage.setItem('siswaklik_theme', isDark ? 'dark' : 'light');
+    }
+
+    if (localStorage.getItem('siswaklik_theme') === 'dark' || (!localStorage.getItem('siswaklik_theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    }
+
     function goToHome() {
         window.location.href = 'https://siswaklik-v2-0.pages.dev/';
     }
 
-    // Pemetaan ikon berdasarkan kata kunci aktiviti
     const iconMap = {
         "Pendaftaran": "fa-user-plus",
         "Lapor Diri": "fa-id-card",
@@ -103,7 +138,6 @@
             const response = await fetch(JSON_URL);
             if (!response.ok) throw new Error("Gagal memuatkan fail JSON.");
             const data = await response.json();
-            
             processAndRender(data);
         } catch (e) {
             console.error("Error:", e);
@@ -115,15 +149,12 @@
         const parts = dateStr.split(/[-–]/);
         const startPart = parts[0].trim();
         const endPart = parts[parts.length - 1].trim();
-        
         const yearMatch = dateStr.match(/\d{4}/);
         const year = yearMatch ? yearMatch[0] : new Date().getFullYear();
-
         const monthMap = { 
             'Jan': 'Jan', 'Feb': 'Feb', 'Mac': 'Mar', 'Apr': 'Apr', 'Mei': 'May', 'Jun': 'Jun',
             'Jul': 'Jul', 'Ogos': 'Aug', 'Sept': 'Sep', 'Okt': 'Oct', 'Nov': 'Nov', 'Dis': 'Dec'
         };
-
         let processedStart = startPart;
         for (const [ms, en] of Object.entries(monthMap)) {
             if (processedStart.includes(ms)) {
@@ -131,22 +162,18 @@
                 break;
             }
         }
-        
         if (!Object.keys(monthMap).some(m => startPart.includes(m))) {
             const monthFromEndMatch = endPart.match(/[A-Za-z]+/);
             const monthFromEnd = monthFromEndMatch ? monthFromEndMatch[0] : "";
             processedStart += ` ${monthMap[monthFromEnd] || monthFromEnd}`;
         }
-
         return new Date(`${processedStart} ${year}`);
     }
 
     function processAndRender(data) {
-        document.getElementById('sessionInfo').innerText = `Data Sesi ${data.sesi} (Kemaskini: ${data.kemaskini})`;
-        
+        document.getElementById('sessionInfo').innerText = `Sesi ${data.sesi} | Kemaskini: ${data.kemaskini}`;
         const allEvents = [];
         const semesters = ['semester_1', 'semester_2', 'semester_3'];
-
         semesters.forEach(semKey => {
             if (data.aktiviti_akademik[semKey]) {
                 const semLabel = semKey.replace('_', ' ').toUpperCase();
@@ -162,14 +189,12 @@
                 });
             }
         });
-
         renderUI(allEvents);
     }
 
     function renderUI(events) {
         const container = document.getElementById('calendarList');
         const now = new Date();
-        
         let activeEvent = events[0];
         let passedCount = 0;
 
@@ -182,7 +207,6 @@
 
         document.getElementById('currentActivity').innerText = activeEvent.title;
         document.getElementById('dateRange').innerText = `${activeEvent.rawDate} (${activeEvent.semester})`;
-        
         const progress = Math.round((passedCount / events.length) * 100);
         document.getElementById('progressText').innerText = progress + "%";
         document.getElementById('progressBar').style.width = progress + "%";
@@ -193,20 +217,20 @@
             const isPast = now > item.startDate && !isActive;
 
             return `
-                <div class="bg-white p-6 rounded-[2.5rem] border-2 ${isActive ? 'border-blue-500 bg-blue-50/20 shadow-lg' : 'border-white'} transition-all">
+                <div class="p-6 rounded-[2.5rem] border-2 transition-all ${isActive ? 'bg-brandBlue/10 border-brandBlue shadow-lg' : 'bg-white dark:bg-darkCard border-slate-100 dark:border-slate-800'}">
                     <div class="flex items-center gap-4">
-                        <div class="h-14 w-14 ${isActive ? 'bg-blue-600 text-white' : (isPast ? 'bg-slate-100 text-slate-300' : 'bg-slate-50 text-slate-400')} rounded-2xl flex items-center justify-center text-xl shrink-0">
+                        <div class="h-14 w-14 rounded-2xl flex items-center justify-center text-xl shrink-0 ${isActive ? 'bg-brandBlue text-brandYellow' : (isPast ? 'bg-slate-100 dark:bg-slate-800 text-slate-300 dark:text-slate-600' : 'bg-slate-50 dark:bg-slate-800 text-brandBlue dark:text-brandYellow')}">
                             <i class="fas ${item.icon}"></i>
                         </div>
                         <div class="flex-1 overflow-hidden">
                             <div class="flex justify-between items-center">
-                                <span class="text-[10px] font-bold ${isActive ? 'text-blue-500' : 'text-slate-400'} uppercase">${item.semester}</span>
-                                ${isActive ? '<span class="text-[9px] bg-blue-600 text-white px-2 py-0.5 rounded-full font-bold animate-pulse">AKTIF</span>' : ''}
+                                <span class="text-[10px] font-bold uppercase ${isActive ? 'text-brandBlue dark:text-brandYellow' : 'text-slate-400'}">${item.semester}</span>
+                                ${isActive ? '<span class="text-[9px] bg-brandBlue dark:bg-brandYellow text-brandYellow dark:text-brandBlue px-2 py-0.5 rounded-full font-black animate-pulse uppercase">Aktif</span>' : ''}
                             </div>
-                            <h4 class="font-bold text-slate-800 text-lg leading-tight truncate">${item.title}</h4>
+                            <h4 class="font-bold text-slate-800 dark:text-white text-lg leading-tight truncate">${item.title}</h4>
                             <div class="flex justify-between items-center mt-1">
-                                <p class="text-xs text-slate-400 font-medium">${item.rawDate}</p>
-                                <span class="text-[9px] font-bold text-slate-300">${item.duration}</span>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">${item.rawDate}</p>
+                                <span class="text-[9px] font-bold text-slate-300 dark:text-slate-600">${item.duration}</span>
                             </div>
                         </div>
                     </div>
