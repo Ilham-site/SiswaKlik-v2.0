@@ -1,8 +1,8 @@
-<section class="animate-in fade-in duration-500">
-    <div id="file-system-content">
+<section class="animate-in fade-in duration-500 min-h-screen bg-slate-50 dark:bg-darkBg transition-colors">
+    <div id="file-system-content" class="p-4 md:p-0">
         <div class="text-center py-20">
-            <i class="fas fa-circle-notch animate-spin text-4xl text-blue-600 mb-4"></i>
-            <p class="text-slate-400 font-bold">Memuatkan sistem fail...</p>
+            <i class="fas fa-circle-notch animate-spin text-4xl text-brandBlue dark:text-brandYellow mb-4"></i>
+            <p class="text-slate-500 dark:text-slate-400 font-bold">Memuatkan sistem fail...</p>
         </div>
     </div>
 </section>
@@ -30,7 +30,7 @@
         }
     }
 
-    // 2. LOGIK AUTO-SYNC BACKGROUND (PEMBETULAN DI SINI)
+    // 2. LOGIK AUTO-SYNC BACKGROUND
     async function backgroundSync() {
         const accessToken = localStorage.getItem('siswaklik_access_token');
         if (!accessToken) return;
@@ -40,7 +40,6 @@
 
         for (const file of pendingFiles) {
             try {
-                // GUNAKAN file.parentId supaya fail masuk ke folder yang betul
                 const targetFolderId = file.parentId || localStorage.getItem('siswaklik_drive_folder_id') || 'root';
 
                 const metadata = {
@@ -65,7 +64,6 @@
                     file.driveId = driveFile.id;
                     localStorage.setItem('siswa_local_files', JSON.stringify(localFiles));
                     
-                    // Trigger refresh jika sedang berada dalam folder tersebut
                     if (typeof renderFiles === 'function') renderFiles();
                 }
             } catch (err) {
@@ -81,6 +79,24 @@
         return new Blob([u8arr], {type:mime});
     }
 
-    setInterval(backgroundSync, 15000); // Sync lebih kerap (15 saat)
+    // Interval sync asal dikekalkan
+    setInterval(backgroundSync, 15000); 
     loadView('folder.html');
 </script>
+
+<style>
+    /* Custom Scrollbar untuk Dark Mode */
+    .dark ::-webkit-scrollbar {
+        width: 8px;
+    }
+    .dark ::-webkit-scrollbar-track {
+        background: #0F172A;
+    }
+    .dark ::-webkit-scrollbar-thumb {
+        background: #1E293B;
+        border-radius: 10px;
+    }
+    .dark ::-webkit-scrollbar-thumb:hover {
+        background: #334155;
+    }
+</style>
