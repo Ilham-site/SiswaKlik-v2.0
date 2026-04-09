@@ -117,6 +117,29 @@
             adjustHeight(document.getElementById('eventFrame'));
             adjustHeight(document.getElementById('solatFrame'));
         }, 3000); 
+        
+        // Tambah ini dalam kalendar.html untuk hantar isyarat tema ke iframe
+const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+function handleThemeChange(e) {
+    const isDark = e.matches;
+    const eventFrame = document.getElementById('eventFrame');
+    if (eventFrame && eventFrame.contentWindow) {
+        eventFrame.contentWindow.postMessage({ 
+            type: 'THEME_CHANGE', 
+            isDark: isDark 
+        }, '*');
+    }
+}
+
+// Pantau perubahan tema sistem
+mediaQuery.addListener(handleThemeChange);
+
+// Hantar tema awal semasa iframe siap loading
+document.getElementById('eventFrame').onload = function() {
+    handleThemeChange(mediaQuery);
+    adjustHeight(this);
+};
     </script>
 </body>
 </html>
