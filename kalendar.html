@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiswaKlik | Kalendar & Waktu Solat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Amiri:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f0f4f8;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='%232563eb' fill-opacity='0.04'%3E%3Cpath d='M50 5L53.5 35L85 35L60 55L70 85L50 65L30 85L40 55L15 35L46.5 35z'/%3E%3C/g%3E%3C/svg%3E");
+            min-height: 100vh;
+        }
+
+        .content-embed {
+            width: 100%;
+            border: none;
+            border-radius: 2rem;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .section-card {
+            transition: transform 0.2s ease;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+
+    <div class="max-w-5xl mx-auto space-y-10">
+        
+        <div class="section-card space-y-4">
+            <div class="flex items-center gap-2 px-4">
+                <div class="h-6 w-1 bg-blue-600 rounded-full"></div>
+                <h2 class="font-extrabold text-slate-700 uppercase tracking-tighter">Perancangan Aktiviti & Akademik</h2>
+            </div>
+            
+            <div class="content-embed overflow-hidden">
+                <iframe src="event.html" id="eventFrame" scrolling="no" onload="adjustHeight(this)" class="w-full border-0 min-h-[600px]"></iframe>
+            </div>
+        </div>
+
+        <div class="section-card space-y-4">
+            <div class="flex items-center gap-2 px-4">
+                <div class="h-6 w-1 bg-emerald-500 rounded-full"></div>
+                <h2 class="font-extrabold text-slate-700 uppercase tracking-tighter">Waktu Solat & Ibadah</h2>
+            </div>
+
+            <div class="content-embed overflow-hidden">
+                <iframe src="solat.html" id="solatFrame" scrolling="no" onload="adjustHeight(this)" class="w-full border-0 min-h-[400px]"></iframe>
+            </div>
+        </div>
+
+        <footer class="text-center pt-10 pb-20">
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">
+                SiswaKlik Management System &copy; 2026
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // 1. Semakan sesi pengguna (Data dari login.html)
+        document.addEventListener('DOMContentLoaded', function() {
+            const userData = JSON.parse(localStorage.getItem('siswaklik_user'));
+            
+            if (!userData) {
+                // Jika tiada data profil, halakan pengguna ke halaman login
+                window.location.href = 'login.html';
+            }
+        });
+
+        // 2. Fungsi Penyelarasan Google Calendar
+        function syncGoogleCalendar() {
+            const token = localStorage.getItem('siswaklik_access_token');
+            if (token) {
+                const eventFrame = document.getElementById('eventFrame');
+                if (eventFrame.contentWindow) {
+                    eventFrame.contentWindow.postMessage({ 
+                        type: 'GOOGLE_AUTH_TOKEN', 
+                        token: token 
+                    }, '*');
+                    eventFrame.contentWindow.postMessage({ action: 'SYNC_CALENDAR' }, '*');
+                }
+            } else {
+                alert("Sila log masuk semula untuk penyelarasan Google Calendar.");
+                window.location.href = 'login.html';
+            }
+        }
+
+        // 3. Pelarasan Ketinggian Iframe secara dinamik
+        function adjustHeight(iframe) {
+            try {
+                if (iframe.contentWindow && iframe.contentWindow.document.documentElement) {
+                    const newHeight = iframe.contentWindow.document.documentElement.scrollHeight;
+                    if (newHeight > 0) {
+                        iframe.style.height = newHeight + 'px';
+                    }
+                }
+            } catch (err) {
+                // Cross-origin error handling
+            }
+        }
+
+        // Jalankan pelarasan apabila saiz tetingkap berubah
+        window.addEventListener('resize', () => {
+            adjustHeight(document.getElementById('eventFrame'));
+            adjustHeight(document.getElementById('solatFrame'));
+        });
+
+        // Pemerhatian berkala untuk kandungan dinamik dalam iframe
+        setInterval(() => {
+            adjustHeight(document.getElementById('eventFrame'));
+            adjustHeight(document.getElementById('solatFrame'));
+        }, 3000); 
+    </script>
+</body>
+</html>
