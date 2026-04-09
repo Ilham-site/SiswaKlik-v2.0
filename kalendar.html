@@ -117,7 +117,15 @@
             adjustHeight(document.getElementById('eventFrame'));
             adjustHeight(document.getElementById('solatFrame'));
         }, 3000); 
-
+    // Contoh fungsi tukar tema dalam kalendar.html
+function toggleDarkMode() {
+    const isDark = document.documentElement.classList.toggle('dark');
+    const theme = isDark ? 'dark' : 'light';
+    
+    // Hantar isyarat ke iframe event.html
+    const eventFrame = document.getElementById('eventFrame').contentWindow;
+    eventFrame.postMessage({ type: 'THEME_UPDATE', theme: theme }, '*');
+}
     </script>
 </body>
 </html>
